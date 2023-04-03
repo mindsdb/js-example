@@ -52,7 +52,7 @@ const _DEFAULT_TRADE_DATA_LIMIT = 1000;
 const _MAX_TRADE_DATA_LIMIT = 10000;
 
 const app = express();
-app.use(express.static("dist"));
+app.use(express.static("public"));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/index.html"));
 });
