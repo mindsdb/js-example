@@ -44,7 +44,7 @@ commander
   .option(
     "-w, --window <value>",
     "number of data rows used to train the model (see https://docs.mindsdb.com/model-types#time-series-models)",
-    1000
+    100
   )
   .option(
     "-h, --horizon <value>",
@@ -88,6 +88,19 @@ async function trainModel(name, symbolPair, limit, window, horizon) {
     orderBy: "open_time",
     window: window,
     horizon: horizon,
+    using: {
+      "model.args": {
+        submodels: [
+          {
+            module: "NeuralTs",
+            args: {
+              fit_on_dev: false,
+              search_hyperparameters: false,
+            },
+          },
+        ],
+      },
+    },
   });
 }
 
