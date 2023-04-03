@@ -23,7 +23,7 @@ Next, you need to install dependencies.
 
 ## Training Models
 
-Before you can run the application locally, you need to train your own models to use. We provided a handy script `trainCoinModel.js` for this. This example uses the following coins, but we'll show you how to add more if you want:
+Before you can run the application locally, you need to train your own models to use. We provided a handy script `trainCoinModel.js` for this. This example uses the following coins:
 
 * Bitcoin (BTC)
 * Etherium (ETH)
