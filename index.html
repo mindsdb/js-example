@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link href="./css/main.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script defer type="text/javascript" src="./js/crypto.js"></script>
+  <title>Crypto ML Forecast</title>
+</head>
+
+<body>
+  <div class="ml-auto mr-auto p-4 max-w-screen-lg">
+    <!-- Hero -->
+    <div class="pt-8 text-center">
+      <h1 class="text-5xl font-bold text-primary-900">Cryptocurrency <span class="text-primary-500">ML </span> Forecast
+      </h1>
+      <p class="mt-8 text-lg text-neutral-900 text-center">This is an example of the power of MindsDB and how it can
+        simplify
+        applying machine
+        learning to your applications.
+        Anyone can replicate this example, and train their own models to predict the future prices of cryptocurrencies.
+      </p>
+    </div>
+
+    <!-- Content -->
+    <div class="mt-16">
+      <table class="w-full text-sm text-left text-neutral-500 border-separate border-spacing-y-2" id="crypto-table">
+        <thead class="text-xs text-neutral-700 uppercase bg-neutral-50">
+          <tr>
+            <th scope="col" class="px-6 py-3" align="center">
+              Coin
+            </th>
+            <th scope="col" class="px-6 py-3" align="right">
+              Price (USDT)
+            </th>
+            <th scope="col" class="px-6 py-3" align="right">
+              1m %
+            </th>
+            <th scope="col" class="px-6 py-3" align="right">
+              1h %
+            </th>
+            <th scope="col" class="px-6 py-3" align="right">
+              1d %
+            </th>
+            <th scope="col" class="px-6 py-3" align="right">
+              +1m
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- BTCUSDT -->
+          <tr class="bg-white">
+            <th scope="row" class="px-6 py-4 font-normal text-neutral-900 whitespace-nowrap">
+              <span class="flex gap-2 items-center">
+                <img src="/img/btcusdt.svg" class="w-16 h-16"></img>
+                <div>
+                  <div class="font-medium">Bitcoin</div>
+                  <div class="text-neutral-500">BTC</div>
+                </div>
+              </span>
+
+            </th>
+            <td class="px-6 py-4" align="right" id="btcusdt-price">
+              <span class="bg-neutral-200 h-4 w-20 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="btcusdt-1m-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="btcusdt-1h-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="btcusdt-1d-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4 font-bold" align="right" id="btcusdt-1m-forecast">
+              <span
+                class="bg-neutral-200 w-20 p-1 block animate-pulse rounded-md text-xs text-center">Predicting...</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7">
+              <div id="btcusdt-chart" class="bg-primary-50 animate-pulse rounded-sm" style="height:100px">
+              </div>
+            </td>
+          </tr>
+          <!-- ETHUSDT -->
+          <tr class="bg-white">
+            <th scope="row" class="px-6 py-4 font-normal text-neutral-900 whitespace-nowrap">
+              <span class="flex gap-2 items-center">
+                <img src="/img/ethusdt.svg" class="w-16 h-16"></img>
+                <div>
+                  <div class="font-medium">Etherium</div>
+                  <div class="text-neutral-500">ETH</div>
+                </div>
+              </span>
+
+            </th>
+            <td class="px-6 py-4" align="right" id="ethusdt-price">
+              <span class="bg-neutral-200 h-4 w-20 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="ethusdt-1m-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="ethusdt-1h-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="ethusdt-1d-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4 font-bold" align="right" id="ethusdt-1m-forecast">
+              <span
+                class="bg-neutral-200 w-20 p-1 block animate-pulse rounded-md text-xs text-center">Predicting...</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7">
+              <div id="ethusdt-chart" class="bg-primary-50 animate-pulse rounded-sm" style="height:100px">
+              </div>
+            </td>
+          </tr>
+          <!-- BNBUSDT -->
+          <tr class="bg-white">
+            <th scope="row" class="px-6 py-4 font-normal text-neutral-900 whitespace-nowrap">
+              <span class="flex gap-2 items-center">
+                <img src="/img/bnbusdt.svg" class="w-16 h-16"></img>
+                <div>
+                  <div class="font-medium">Binance Coin</div>
+                  <div class="text-neutral-500">BNB</div>
+                </div>
+              </span>
+
+            </th>
+            <td class="px-6 py-4" align="right" id="bnbusdt-price">
+              <span class="bg-neutral-200 h-4 w-20 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="bnbusdt-1m-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="bnbusdt-1h-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="bnbusdt-1d-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4 font-bold" align="right" id="bnbusdt-1m-forecast">
+              <span
+                class="bg-neutral-200 w-20 p-1 block animate-pulse rounded-md text-xs text-center">Predicting...</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7">
+              <div id="bnbusdt-chart" class="bg-primary-50 animate-pulse rounded-sm" style="height:100px">
+              </div>
+            </td>
+          </tr>
+          <!-- DOGEUSDT -->
+          <tr class="bg-white">
+            <th scope="row" class="px-6 py-4 font-normal text-neutral-900 whitespace-nowrap">
+              <span class="flex gap-2 items-center">
+                <img src="/img/dogeusdt.svg" class="w-16 h-16"></img>
+                <div>
+                  <div class="font-medium">Dogecoin</div>
+                  <div class="text-neutral-500">DOGE</div>
+                </div>
+              </span>
+
+            </th>
+            <td class="px-6 py-4" align="right" id="dogeusdt-price">
+              <span class="bg-neutral-200 h-4 w-20 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="dogeusdt-1m-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="dogeusdt-1h-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="dogeusdt-1d-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4 font-bold" align="right" id="dogeusdt-1m-forecast">
+              <span
+                class="bg-neutral-200 w-20 p-1 block animate-pulse rounded-md text-xs text-center">Predicting...</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7">
+              <div id="dogeusdt-chart" class="bg-primary-50 animate-pulse rounded-sm" style="height:100px">
+              </div>
+            </td>
+          </tr>
+          <!-- SOLUSDT -->
+          <tr class="bg-white">
+            <th scope="row" class="px-6 py-4 font-normal text-neutral-900 whitespace-nowrap">
+              <span class="flex gap-2 items-center">
+                <img src="/img/solusdt.svg" class="w-16 h-16"></img>
+                <div>
+                  <div class="font-medium">Solana</div>
+                  <div class="text-neutral-500">SOL</div>
+                </div>
+              </span>
+
+            </th>
+            <td class="px-6 py-4" align="right" id="solusdt-price">
+              <span class="bg-neutral-200 h-4 w-20 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="solusdt-1m-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="solusdt-1h-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4" align="right" id="solusdt-1d-percent">
+              <span class="bg-neutral-200 h-4 w-12 block animate-pulse rounded-md"></span>
+            </td>
+            <td class="px-6 py-4 font-bold" align="right" id="solusdt-1m-forecast">
+              <span
+                class="bg-neutral-200 w-20 p-1 block animate-pulse rounded-md text-xs text-center">Predicting...</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7">
+              <div id="solusdt-chart" class="bg-primary-50 animate-pulse rounded-sm" style="height:100px">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+
+</html>

@@ -1,3 +1,7 @@
 {
-  "btcusdt": "btcusdt_model"
+  "btcusdt": "btcusdt_model",
+  "ethusdt": "ethusdt_model",
+  "bnbusdt": "bnbusdt_model",
+  "dogeusdt": "dogeusdt_model",
+  "solusdt": "solusdt_model"
 }
