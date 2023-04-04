@@ -1,4 +1,4 @@
-# Example MindsDB Web Web Application: Crypto ML Forecasting
+# Example MindsDB Web Application: Crypto ML Forecasting
 This is an example of the power of MindsDB and how it can simplify applying machine learning to your applications. We will train our own ML models and use them to predict the price of several cryptocurrencies against [USDT](https://tether.to/) a minute into the future. Anyone can replicate this example, and train their own models to predict the future prices of cryptocurrencies.
 
 This example uses the [Express](https://expressjs.com/) framework for the backend and [Tailwind CSS](https://tailwindcss.com/) for the frontend, but you can apply the concepts here to any framework.
