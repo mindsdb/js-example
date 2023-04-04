@@ -1,22 +1,5 @@
 Chart.defaults.scale.grid.display = false;
-
 _MAX_RETRIES = 3;
-
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Retry fetching trade/prediction data a max of 3 times.
-    const errorConfig = error.config;
-    if (!errorConfig._retries) {
-      errorConfig._retries = 0;
-    }
-    if (errorConfig._retries >= _MAX_RETRIES) {
-      return Promise.reject(error);
-    }
-    errorConfig._retries += 1;
-    return axios.request(error.config);
-  }
-);
 
 fetchTradeData("btcusdt");
 fetchTradeData("ethusdt");
@@ -73,11 +56,20 @@ function makeTradeDataChart(symbol, tradeData) {
   });
 }
 
-function fetchTradeData(symbol) {
+function fetchTradeData(symbol, currentRetry = 0) {
   axios
     .get(`/trade-data/${symbol}?limit=1440`)
     .then((data) => {
       const tradeData = data.data;
+      if (tradeData.length === 0) {
+        // If we fail to get trade data the promise won't reject, it will
+        // just return empty data. So handle retrying this way.
+        if (currentRetry < _MAX_RETRIES) {
+          console.log(`Couldn't fetch data for symbol ${symbol}. Retrying`);
+          return fetchTradeData(symbol, currentRetry + 1);
+        }
+        return Promise.reject(data);
+      }
       const allPrices = tradeData.map((d) => d["close_price"]);
       lastHourPrices = allPrices.slice(-61);
 
@@ -129,17 +121,28 @@ function fetchTradeData(symbol) {
     });
 }
 
-function fetchPredictionData(symbol) {
+function fetchPredictionData(symbol, currentRetry = 0) {
   axios
     .get(`/forecast/${symbol}`)
     .then((predictions) => {
+      if (predictions.data.length === 0) {
+        // If we fail to get predictions the promise won't reject, it will
+        // just return empty data. So handle retrying this way.
+        if (currentRetry < _MAX_RETRIES) {
+          console.log(
+            `Couldn't prediction data for symbol ${symbol}. Retrying`
+          );
+          return fetchPredictionData(symbol, currentRetry + 1);
+        }
+        return Promise.reject(predictions);
+      }
       // Update 1m prediction.
       const nextMinPrice = predictions.data[0]["open_price"];
       const nextPriceEle = document.getElementById(`${symbol}-1m-forecast`);
       nextPriceEle.innerHTML = "$" + parseFloat(nextMinPrice).toFixed(3);
     })
     .catch((err) => {
-      console.log("Could not get prediction");
+      console.log("Could not fetch predictions for . Retrying");
       console.log(err);
     });
 }
