@@ -1,0 +1,83 @@
+@media only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px) {
+
+  /* Force table to not be like tables anymore */
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  td .coin-display {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Hide table headers (but not display: none;, for accessibility) */
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr.data-row {
+    border-top: 1px solid #E6E6E7
+  }
+
+  tr.chart-row {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  tr {
+    border-left: 1px solid #E6E6E7;
+    border-right: 1px solid #E6E6E7
+  }
+
+  td {
+    /* Behave  like a "row" */
+    border: none;
+    position: relative;
+  }
+
+  td:before {
+    /* Now like a table header */
+    position: absolute;
+    /* Top/left values mimic padding */
+    top: 1rem;
+    left: 1.5rem;
+    padding-right: 1.5rem;
+    white-space: nowrap;
+    color: rgb(104 102 109);
+  }
+
+  /*
+	Label the data
+	*/
+
+  .data-row td:nth-of-type(2):before {
+    content: "Price (USDT)";
+  }
+
+  .data-row td:nth-of-type(3):before {
+    content: "1m %";
+  }
+
+  .data-row td:nth-of-type(4):before {
+    content: "1h %";
+  }
+
+  .data-row td:nth-of-type(5):before {
+    content: "1d %";
+  }
+
+  .data-row td:nth-of-type(6):before {
+    content: "+1m";
+  }
+}
