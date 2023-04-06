@@ -57,6 +57,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/index.html"));
 });
 
+app.get("/how-it-works", (_, res) => {
+  res.sendFile(path.join(__dirname, "/how-it-works.html"));
+});
+
 app.get("/trade-data/:symbolId", async (req, res) => {
   let limit = _DEFAULT_TRADE_DATA_LIMIT;
   if (req.query && req.query.limit) {
