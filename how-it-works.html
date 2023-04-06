@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <link href="/css/main.css" rel="stylesheet">
+  <link href="/lib/css/prism.css" rel="stylesheet">
+  <script src="/lib/js/prism.js"></script>
   <title>How it Works</title>
 </head>
 
@@ -23,7 +25,244 @@
       </span>
     </nav>
   </div>
-  HI!
+<div class="ml-auto mr-auto px-4 py-16 max-w-screen-lg">
+  <h1 class="text-5xl font-bold text-primary-900 text-center leading-normal">How Forecasting Crypto Prices Works Using
+    <span class="text-primary-500">ML
+    </span>
+  </h1>
+
+  <p class="mt-8 text-primary-900">Machine learning can seem complicated, but you'll see how using MindsDB can simplify
+    things a lot.
+    We'll walk you through how this example web application works, all the way from understanding MindsDB to making
+    predictions.</p>
+
+  <h2 class="mt-16 mb-4 text-4xl text-primary-900">MindsDB Overview</h2>
+
+  <p class="text-primary-900"><a href="https://mindsdb.com" target="_blank" class="text-primary-500">Our website says it
+      best</a>, but here's a
+    quick explanation of what MindsDB is and how it works.</p>
+
+  <br />
+
+  <p class="text-primary-900">
+    MindsDB enables you to build, train, optimize, and deploy your ML models with data directly from your database. It's
+    an all-in-one solution to apply machine learning by connecting to your data from any data source.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    We do this by using a special concept we call <i>AI Tables</i>. AI Tables are machine learning models that are
+    stored as tables inside a database. This is super powerful because it means you can train ML models and make
+    predictions against them using simple SQL statements.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    Most of the hard work is done for you automatically behind the scenes (this is called <i>Auto ML</i>):</p>
+
+  <br />
+
+
+  <ul class="list-disc list-inside text-primary-900">
+    <li>Feature engineering</li>
+    <li>Building, training, and optimizing models</li>
+    <li>Assembling, verifying, and deploying models to production</li>
+  </ul>
+
+  <br />
+
+  <p class="text-primary-900">
+    All you have to do is connect your data to MindsDB and issue some commands to get production ready ML models! You'll
+    see what we mean once we get into the details below.
+  </p>
+
+  <h2 class="mt-8 mb-4 text-4xl text-primary-900">Using MindsDB in Applications</h2>
+
+  <p class="text-primary-900">
+    Although we have a <a href="https://cloud.mindsdb.com" target="_blank" class="text-primary-500">handy Cloud
+      editor</a> to use MindsDB from the browser, this example uses our <a
+      href="https://www.npmjs.com/package/mindsdb-js-sdk" target="_blank" class="text-primary-500">JavaScript SDK</a> to
+    use MindsDB directly from a <a href="https://nodejs.org/en" target="_blank" class="text-primary-500">Node.js</a>
+    server.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    After following <a href="https://github.com/mindsdb/js-example" target="_blank" class="text-primary-500">the
+      installation instructions</a>, we have to connect to MindsDB so we can start using the SDK:
+  </p>
+
+  <pre>
+    <code class="language-js">
+const MindsDB = require("mindsdb-js-sdk").default;
+await MindsDB.connect({
+  host: 'https://cloud.mindsdb.com', // This is the default host, so you can leave it blank.
+  username: 'your email here',
+  password: 'your password here'
+})
+    </code>
+  </pre>
+
+  <br />
+
+  After connecting to MindsDB, we have to connect our datasource to MindsDB. We support many <a
+    href="https://docs.mindsdb.com/data-integrations/all-data-integrations" target="_blank"
+    class="text-primary-500">database integrations</a>,
+  but we'll be using our <a href="https://docs.mindsdb.com/contribute/app-handlers" target="_blank"
+    class="text-primary-500">Binance Application
+    handler</a> to pull data directly from the Binance API. It's as simple as this:
+
+  <pre>
+      <code class="language-js">
+const binanceDb = await MindsDB.Databases.createDatabase("my_binance", "binance", {});
+      </code>
+  </pre>
+
+  <br />
+
+  <p class="text-primary-900">
+    After connecting to MindsDB and hooking up our datasource, we're ready to train models right away! Let's get right
+    into it.
+  </p>
+
+
+  <h2 class="mt-8 mb-4 text-4xl text-primary-900">Training Timeseries Models</h2>
+
+  <p class="text-primary-900">
+    Time series models are technically regression or classification models. What's special about them is that they
+    consider data to be sequential, and order it by time. Predictions made using a time series model are called
+    <i>forecasts</i>. If you want more detail, you can read all about time series models <a
+      href=https://docs.mindsdb.com/model-types#time-series-models" target="_blank" class="text-primary-500">on our
+      website</a>.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    Also, time series models use a certain amount of past data points (called the <i>window</i>) to predict the next
+    data points
+    (called the <i>horizon</i>). In our example, we use the previous 100 data points to predict the next 10, but you can
+    configure this yourself. If you take a look at our handy <a
+      href="https://github.com/mindsdb/js-example/blob/main/scripts/trainCoinModel.js" target="_blank"
+      class="text-primary-500">trainCoinModel.js</a> script we provided, you'll see that training a time series model
+    looks something like this:
+  </p>
+
+  <pre>
+        <code class="language-js">
+const select = `
+  SELECT * FROM aggregated_trade_data
+  WHERE symbol = 'btcusdt'
+  AND interval = '1m'
+  LIMIT 10000;
+`;
+
+const coinModel = await MindsDB.Models.trainModel("btcusdt_model", "open_price", "mindsdb", {
+  integration: "my_binance",
+  select: select,
+  orderBy: "open_time",
+  window: 100,
+  horizon: 10,
+  using: {
+    "model.args": {
+      submodels: [
+        {
+          module: "NeuralTs",
+          args: {
+            fit_on_dev: false,
+            search_hyperparameters: false,
+          },
+        },
+      ],
+    },
+  }});
+        </code>
+      </pre>
+
+  <br />
+
+  <p class="text-primary-900">
+    Let's break it down.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    First, we're telling MindsDB which data to use to train our model with the SQL select statement. We're getting the
+    latest
+    10000 of aggregated trade data for the BTCUSDT (Bitcoin to Tether) trading pair, at 1m trading intervals.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    We also have to tell MindsDB to use the Binance data source (i.e. integration) we created earlier, to order data by
+    the opening time of the aggregated trade data, and to use the previous 100 data points to predict the next 10 data
+    points.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    Finally, <a href="https://docs.mindsdb.com/sql/create/predictor#tuning-the-lightwood-ml-engine-features"
+      target="_blank" class="text-primary-500">we can do some model configuration</a>. By default, MindsDB will train
+    several different ML models behind the scenes and automatically choose the best one. However, for this example, we
+    want to use the <a href="https://lightwood.io/mixer.html?#mixer.NeuralTs" target="_blank"
+      class="text-primary-500">NeuralTS mixer</a>.
+  </p>
+
+  <br />
+
+  <p class="text-primary-900">
+    After we wait for the model to finish training, we can use it to make predictions on the future price of Bitcoin!
+    Let's see how to do that.
+  </p>
+
+  <h2 class="mt-8 mb-4 text-4xl text-primary-900">Making Timeseries Predictions</h2>
+
+  <p class="text-primary-900">
+    Now we're at the fun part...actually using the timeseries model we created above. For convenience sake, we will
+    first create a view for the latest 1000 minutes of aggregated trading data, split into 1m intervals. This will be
+    important afterwards when we do a SQL join on this view with the model we just created (remember, our ML models are
+    like tables in a database).
+  </p>
+
+  <pre>
+            <code class="language-js">
+// Get latest 1000m of data.
+const viewSelect = "SELECT * FROM my_binance.aggregated_trade_data WHERE symbol = 'BTCUSDT'"
+const btcusdtView = await MindsDB.Views.createView("recent_btcusdt_view", "mindsdb", viewSelect);
+            </code>
+          </pre>
+
+  <br />
+
+  <p class="text-primary-900">
+    After creating the view, we will predict the price of Bitcoin over the next 10 minutes by joining our model with the
+    view we just created:
+  </p>
+
+  <pre>
+    <code class="language-js">
+const predictQuery = "SELECT m.* FROM recent_btcusdt_view AS t JOIN mindsdb.btcusdt_model AS m WHERE m.open_time > LATEST LIMIT 10";
+const predictionsResponse = await MindsDB.SQL.runQuery(predictQuery);
+    </code>
+  </pre>
+
+  <br />
+
+  <p class="text-primary-900">
+    That's all there is to it! Now you can see the power of MindsDB, and how the concepts of <i>Auto ML</i> and applying
+    ML directly to your data source can make ML applications easier than ever to develop. We only scratched the surface
+    of what you can do here. Be sure to <a href="https://docs.mindsdb.com" target="_blank"
+      class="text-primary-500">check out our full documentation</a> to go even further and make some truly amazing
+    applications!
+  </p>
+
+</div>
 
   <!-- Footer -->
   <div class="flex justify-center bg-primary-800">
