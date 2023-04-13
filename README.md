@@ -3,6 +3,8 @@ This is an example of the power of MindsDB and how it can simplify applying mach
 
 This example uses the [Express](https://expressjs.com/) framework for the backend and [Tailwind CSS](https://tailwindcss.com/) for the frontend, but you can apply the concepts here to any framework.
 
+**This example currently only works if you're MindsDB running locally from a location *not* restricted by Binance (United States, Malaysia, Ontario (Canada) are restricted).**
+
 | **NOTE**: This is an example project used for educational purposes. MindsDB does not recommend using these ML models to influence real trading decisions. MindsDB is not in any way affiliated with coins used in this example.
 
 <br>
@@ -51,6 +53,14 @@ First, make sure you enter your MindsDB Cloud username and password into `./conf
   "host": "https://cloud.mindsdb.com",
   "user": "YOUR USERNAME HERE",
   "password": "YOUR PASSWORD HERE"
+}
+```
+
+Or if running locally
+
+```
+{
+  "host": "http://127.0.0.1:47334"
 }
 ```
 
